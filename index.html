@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Dispenser API - Gunivers</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-dark.min.css" integrity="sha512-USRvpT7dJFA7mrRx4+esmy+2mYr8vlgmDLFpkNeVEd+D5CgQvULKPYVnDV97Ywfek+e//HdSA0NlaPe4oqkwfQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="box-info" class="box-window draggable">
+        <div class="box-bar">
+            <span>Dispenser API - Gunivers</span>
+        </div>
+        <div class="box-content">
+            <h1 class="page-title">
+                <img src="dispenser-api-icon-100w.png" />Dispenser API
+            </h1>
+            <div>
+                <a href="https://dispenser.gunivers.net/api/versions" class="btn btn-outline">
+                    ⚙️ Api
+                </a>
+                <a href="https://dispenser.gunivers.net/docs/" class="btn ">
+                    📖 Docs Swagger
+                </a>
+                <a href="https://github.com/Dispenser-Projects/Dispenser-API" class="btn ">
+                    Github
+                </a>              
+            </div>
+            <h2>Example projects :</h2>
+            <div>
+                <a href="https://dispenser.gunivers.net/block-renderer" class="btn ">
+                    🧊 Block Renderer
+                </a>
+            </div>
+            <div style="margin-top: 1rem;">
+                <a href="https://github.com/Dispenser/Dispenser-API/releases" class="no-underline">
+                    <img src="https://img.shields.io/github/v/release/Dispenser/Dispenser-API" />
+                </a>
+                <a href="https://discord.gg/J7f4WynJq9" class="no-underline">
+                    <img src="https://img.shields.io/discord/125723125685026816?color=blue&label=Discord" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="box-readme-github" class="box-window draggable">
+        <div class="box-bar">
+            <span>README.md</span>
+        </div>
+        <div class="box-content"></div>
+    </div>
+    
+    <div id="box-block-renderer" class="box-window draggable">
+        <div class="box-bar">
+            <span>Block Renderer</span>
+        </div>
+        <div class="box-content">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <a href="https://github.com/theogiraudet/Minecraft-Block-Renderer" class="btn btn-outline">
+                        Github
+                    </a>
+                </div>
+            </div>
+            <iframe id="iframe-block-renderer" src="https://dispenser.gunivers.net/block-renderer/"></iframe>
+        </div>
+    </div>
+
+    <div id="box-sponsor" class="box-window draggable">
+        <div class="box-bar">
+            <span>Sponsor - mTxServ</span>
+        </div>
+        <div class="box-content">
+            <a href="https://mtxserv.com/fr/?utm_source=altearn_website&utm_medium=website&utm_campaign=altearn" title="Louez votre serveur haute qualité, profitez pleinement de vos jeux préférés"><img src="https://mtxserv.com/build/img/banners/serveur_minecraft.png" width="200"/></a>
+        </div>
+    </div>
+    
+</body>
+
+<script type="module">
+    import 'https://cdn.interactjs.io/v1.9.20/auto-start/index.js'
+    import 'https://cdn.interactjs.io/v1.9.20/actions/drag/index.js'
+    import 'https://cdn.interactjs.io/v1.9.20/modifiers/index.js'
+    import interact from 'https://cdn.interactjs.io/v1.9.20/interactjs/index.js'
+  
+    let posX
+    let posY
+
+    function getTranslateX(el) {
+        var style = window.getComputedStyle(el);
+        var matrix = new WebKitCSSMatrix(style.transform);
+        return matrix.m41
+    }
+
+    function getTranslateY(el) {
+        var style = window.getComputedStyle(el);
+        var matrix = new WebKitCSSMatrix(style.transform);
+        return matrix.m42
+    }
+
+    if (window.innerWidth > 900){
+
+        interact('.draggable').draggable({
+                    listeners: {
+                        start(event) {
+                            event.target.classList.add("dragged")
+                            let lastActive = document.querySelector('.box-active')
+                            if (lastActive){
+                                lastActive.classList.remove('box-active')
+                            }
+                            event.target.classList.add("box-active")
+                        },
+                        move(event) {
+                            posX = getTranslateX(event.target) + event.dx
+                            posY = getTranslateY(event.target) + event.dy
+                            event.target.style.transform =
+                                `translate(${posX}px, ${posY}px)`
+                        },
+                        end(event) {
+                            event.target.classList.remove("dragged")
+                        }
+                    },
+                    modifiers: [
+                    interact.modifiers.restrictRect({
+                        restriction: 'parent'
+                        })
+                    ]
+                })
+        }
+</script>
+
+<script type="module">
+    import { request } from "https://cdn.skypack.dev/@octokit/request";
+    request('GET /repos/{owner}/{repo}/readme', {
+        headers: {
+            "Accept": "application/vnd.github.v3.html",
+        },
+        owner: 'Dispenser-Projects',
+        repo: 'Dispenser-API'
+    }).then((resp) => {
+        if (resp.status == 200) {
+            let htmlReadme = resp.data.replaceAll('"/', '"https://raw.githubusercontent.com/Dispenser-Projects/Dispenser-API/master/')
+            document.querySelector('#box-readme-github > .box-content').innerHTML += htmlReadme            
+        }
+        
+    })
+    
+</script>
+</html>
